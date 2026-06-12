@@ -1,9 +1,40 @@
 /* FoundReach Growth white-label for embedded Suna / Kortix.
    Debrands Kortix/Suna -> FoundReach, hides logos + external links, sets a clean
-   title. Per-Clerk Supabase session injection is wired AFTER the Suna web is
-   deployed (the proxy /__fr-session -> backend mints a Supabase session for the
-   Clerk user, same pattern as wl-postiz / wl-affine). TODO marked below. */
+   title, and per-Clerk auto-login: /__fr-session mints a self-hosted-Supabase
+   session for the Clerk user, which we write into the @supabase/ssr auth cookie
+   (sb-kortix-auth-token) so the embedded Suna logs in with no UI. */
 (function () {
+  /* ---- per-Clerk Supabase auto-login (runs before the debrand UI work) ---- */
+  function b64url(str) {
+    var b = btoa(unescape(encodeURIComponent(str)));
+    return b.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function hasAuthCookie() {
+    return /(^|;\s*)sb-kortix-auth-token(\.\d+)?=/.test(document.cookie);
+  }
+  function setAuthCookie(val) {
+    var tail = "; path=/; max-age=2592000; samesite=none; secure; partitioned";
+    for (var i = 0; i < 8; i++) document.cookie = "sb-kortix-auth-token." + i + "=; path=/; max-age=0";
+    document.cookie = "sb-kortix-auth-token=; path=/; max-age=0";
+    var CHUNK = 3180;
+    if (val.length <= CHUNK) { document.cookie = "sb-kortix-auth-token=" + val + tail; return; }
+    var idx = 0, off = 0;
+    while (off < val.length) { document.cookie = "sb-kortix-auth-token." + idx + "=" + val.substr(off, CHUNK) + tail; off += CHUNK; idx++; }
+  }
+  try {
+    var fru = new URLSearchParams(location.search).get("fr_user") || "";
+    if (fru && fru !== "shared" && !hasAuthCookie()) {
+      fetch("/__fr-session?fr_user=" + encodeURIComponent(fru), { credentials: "include" })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.ok && d.session && d.session.access_token) {
+            setAuthCookie("base64-" + b64url(JSON.stringify(d.session)));
+            location.reload();
+          }
+        }).catch(function () {});
+    }
+  } catch (e) {}
+
   var MAP = [[/kortix/gi, "FoundReach"], [/\bsuna\b/gi, "FoundReach"]];
   function relabel(s) { for (var i = 0; i < MAP.length; i++) s = s.replace(MAP[i][0], MAP[i][1]); return s; }
 
