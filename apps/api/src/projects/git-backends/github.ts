@@ -80,10 +80,10 @@ async function managedAdminAuth(): Promise<GitHubAuthContext> {
     // /user/repos, not /orgs/{owner}/repos. Production managed repos always live
     // under the configured org, so prod keeps the strict org-only path (no
     // lookup); only local dev detects a personal owner (cached via isOrgAccount).
+    // FR patch: always detect owner type (managed owner may be a personal
+    // account, so we cannot assume Organization even in prod).
     const ownerType =
-      config.INTERNAL_KORTIX_ENV === 'prod'
-        ? 'Organization'
-        : (await isOrgAccount(owner, { token: pat })) ? 'Organization' : 'User';
+      (await isOrgAccount(owner, { token: pat })) ? 'Organization' : 'User';
     return { token: pat, source: 'pat', owner, ownerType };
   }
   const installId = managedGithubInstallId();
