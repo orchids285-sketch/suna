@@ -56,6 +56,19 @@
         if (v && /kortix|suna/i.test(v)) n.nodeValue = relabel(v);
       }
     } catch (e) {}
+    // also debrand attributes (aria-label / title / placeholder / alt) — these
+    // are screen-reader/tooltip text the TreeWalker can't reach (e.g. the
+    // onboarding wizard step "Make it your Kortix").
+    try {
+      var ATTRS = ["aria-label", "title", "placeholder", "alt"];
+      var els = document.querySelectorAll("[aria-label],[title],[placeholder],[alt]"), j = 0;
+      for (var k = 0; k < els.length && j < 4000; k++) {
+        for (var a = 0; a < ATTRS.length; a++) {
+          var av = els[k].getAttribute(ATTRS[a]);
+          if (av && /kortix|suna/i.test(av)) { els[k].setAttribute(ATTRS[a], relabel(av)); j++; }
+        }
+      }
+    } catch (e) {}
     // top-left brand logo sweep (CSS misses inline svgs with no logo class)
     try {
       var media = document.querySelectorAll('img,svg,picture,canvas');
