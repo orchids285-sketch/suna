@@ -2114,10 +2114,15 @@ export async function getProjectSessionSandbox(
 ): Promise<ProjectSessionSandbox | null> {
   const response = await backendApi.get<ProjectSessionSandbox>(
     `/projects/${projectId}/sessions/${sessionId}/sandbox`,
-    // 404 is an expected "not provisioned yet" state — caller polls.
+    // "Not provisioned yet" is an expected, polled state. The backend now
+    // returns 200 {status:'missing'} for it (not a 404) so the poll loop
+    // doesn't spam the browser console with red 404s on every tick.
     { showErrors: false },
   );
   if (!response.success || !response.data) return null;
+  // Map the explicit "missing" sentinel back to null so every caller behaves
+  // exactly as it did under the old 404 path.
+  if ((response.data as { status?: string }).status === 'missing') return null;
   return response.data;
 }
 

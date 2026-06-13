@@ -761,7 +761,13 @@ projectsApp.openapi(
       }
       await kickProvisionOnOpen(loaded, sandboxVisible.row, projectId, sessionId);
     }
-    return c.json({ error: 'Not found' }, 404);
+    // No usable sandbox yet (dormant/dead session, or provisioning was just
+    // kicked). Return 200 with an explicit 'missing' status instead of a 404:
+    // the UI polls this endpoint, and a 404 on every tick spams the browser
+    // console with red "Failed to load resource" lines. The web client maps
+    // status:'missing' back to null, so every consumer behaves exactly as
+    // before — this only changes the HTTP status, not the app semantics.
+    return c.json({ status: 'missing' }, 200);
   }
 
   return c.json({
