@@ -28,6 +28,7 @@ import {
   Container,
   FileCode,
   Loader2,
+  Megaphone,
   MessageSquare,
   Package,
   Plug,
@@ -35,6 +36,7 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -444,6 +446,7 @@ function SandboxPicker({
 
 function ProjectHomeSections({ projectId }: { projectId: string }) {
   const openCustomize = useCustomizeStore((s) => s.openCustomize);
+  const router = useRouter();
   const detail = useQuery({
     queryKey: ['project-detail', projectId],
     queryFn: () => getProjectDetail(projectId),
@@ -526,6 +529,29 @@ function ProjectHomeSections({ projectId }: { projectId: string }) {
 
   return (
     <div className="mx-auto mt-9 w-full max-w-3xl">
+      {/* Featured: ad automations (Bïrch surface) — the headline capability,
+          a full-width tile that routes into the automation workspace. */}
+      <button
+        type="button"
+        onClick={() => router.push(`/projects/${projectId}/ads`)}
+        className={cn(
+          'group mb-2.5 flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card/70 p-3.5 text-left backdrop-blur-sm',
+          'transition-all duration-150 hover:border-foreground/25 hover:bg-card',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        )}
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-foreground text-background">
+          <Megaphone className="size-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-foreground">Ad automations</div>
+          <div className="truncate text-xs text-muted-foreground">
+            Mettez en pause les perdants, scalez les gagnants — automatiquement sur Meta, Google, TikTok &amp; Snapchat.
+          </div>
+        </div>
+        <ArrowRight className="size-4 shrink-0 text-muted-foreground/40 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground/60" />
+      </button>
+
       <h2 className="mb-2.5 px-0.5 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
         Build out your project
       </h2>

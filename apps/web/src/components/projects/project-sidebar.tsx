@@ -16,6 +16,7 @@ import {
   List,
   ListTree,
   Loader2,
+  Megaphone,
   MessagesSquare,
   Slack,
   SlidersHorizontal,
@@ -382,6 +383,8 @@ function ProjectSessionsFlyout({ projectId }: { projectId: string }) {
 export function ProjectSidebar({ projectId }: { projectId: string }) {
   const tHardcodedUi = useTranslations('hardcodedUi');
   const router = useRouter();
+  const pathname = usePathname();
+  const adsActive = pathname?.startsWith(`/projects/${projectId}/ads`) ?? false;
   const { state, setOpen, setOpenMobile } = useSidebar();
   const isMobile = useIsMobile();
   const effectiveState = isMobile ? 'expanded' : state;
@@ -590,6 +593,12 @@ export function ProjectSidebar({ projectId }: { projectId: string }) {
             <ProjectAppsRailItem projectId={projectId} />
             <ProjectSetupRailItem projectId={projectId} />
             <CollapsedIconButton
+              icon={<Megaphone className="h-4 w-4" />}
+              label="Automations"
+              onClick={() => router.push(`/projects/${projectId}/ads`)}
+              isActive={adsActive}
+            />
+            <CollapsedIconButton
               icon={<SlidersHorizontal className="h-4 w-4" />}
               label="Customize"
               onClick={goCustomize}
@@ -695,6 +704,18 @@ export function ProjectSidebar({ projectId }: { projectId: string }) {
               <ProjectChangeRequestsNavItem projectId={projectId} />
               <ProjectAppsNavItem projectId={projectId} />
               <ProjectSetupNavItem projectId={projectId} />
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={adsActive}
+                  className="!text-sm font-normal data-[active=true]:font-normal !transition-none transform-none [&_svg]:!size-4"
+                >
+                  <Link href={`/projects/${projectId}/ads`}>
+                    <Megaphone />
+                    <span>Automations</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={goCustomize}
