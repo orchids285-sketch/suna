@@ -61,7 +61,7 @@ const SECTIONS: { id: SectionId; label: string; icon: LucideIcon }[] = [
 
 const card = 'rounded-2xl border border-border/60 bg-card';
 const fieldCls =
-  'h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground outline-none transition-colors focus:border-foreground/30';
+  'h-9 w-full rounded-2xl border border-border bg-background px-3 text-sm text-foreground outline-none transition-colors focus:border-foreground/30';
 const labelCls = 'text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70';
 
 // ============================================================================
@@ -527,7 +527,7 @@ function RuleBuilder({
                   key={v}
                   onClick={() => setEntityLevel(v)}
                   className={cn(
-                    'flex-1 rounded-lg border px-2 py-2 text-sm transition-colors',
+                    'flex-1 rounded-full border px-2 py-2 text-sm transition-colors',
                     entityLevel === v ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:text-foreground',
                   )}
                 >
@@ -555,7 +555,7 @@ function RuleBuilder({
             </div>
           </div>
           {conditions.map((c, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-background p-2.5">
+            <div key={i} className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/60 bg-background p-2.5">
               <select className={cn(fieldCls, 'w-36')} value={c.metric} onChange={(e) => upC(i, { metric: e.target.value })}>
                 {metrics.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
               </select>
@@ -575,7 +575,7 @@ function RuleBuilder({
           ))}
           <button
             onClick={() => setConditions([...conditions, { metric: 'roas', operator: '<', value: '', window: 'last_7_days', group: 0 }])}
-            className="self-start rounded-lg border border-dashed border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+            className="self-start rounded-full border border-dashed border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
           >
             + Ajouter une condition
           </button>
@@ -585,7 +585,7 @@ function RuleBuilder({
         <div className="flex flex-col gap-2">
           <label className={labelCls}>ALORS exécuter</label>
           {ruleActions.map((a, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-background p-2.5">
+            <div key={i} className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/60 bg-background p-2.5">
               <select className={cn(fieldCls, 'min-w-44 flex-1')} value={a.type} onChange={(e) => upA(i, { type: e.target.value })}>
                 {actions.map((x) => <option key={x.value} value={x.value}>{x.label}</option>)}
               </select>
@@ -607,7 +607,7 @@ function RuleBuilder({
           ))}
           <button
             onClick={() => setRuleActions([...ruleActions, { type: 'alert', value: '', value_type: 'percentage' }])}
-            className="self-start rounded-lg border border-dashed border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+            className="self-start rounded-full border border-dashed border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
           >
             + Ajouter une action
           </button>
@@ -623,7 +623,7 @@ function RuleBuilder({
                 <button
                   key={v}
                   onClick={() => setSchedule({ type: v === '1d' ? 'daily' : 'interval', value: v === '1d' ? '09:00' : v })}
-                  className={cn('rounded-lg border px-3 py-2 text-sm transition-colors', on ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:text-foreground')}
+                  className={cn('rounded-full border px-3 py-2 text-sm transition-colors', on ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:text-foreground')}
                 >
                   {l}
                 </button>
